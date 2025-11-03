@@ -219,4 +219,91 @@ main {
 .btn.cancel {
   background-color: #ccc;
   color: #43054E;
+}/* ===== Novas classes para SGEA e Certificados ===== */
+
+/* Texto roxo SGEA */
+.text-ceub {
+    color: #43054E !important;
+}
+
+/* Botão roxo personalizado */
+.btn-ceub {
+    background-color: #43054E;
+    color: #fff;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn-ceub:hover {
+    background-color: #5a0d72; /* Roxo mais claro ao passar o mouse */
+    color: #fff;
+}
+
+/* Botão rosa personalizado */
+.btn-rosa {
+    background-color: #E63973;
+    color: #fff;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn-rosa:hover {
+    background-color: #ff4f9a; /* Rosa mais claro */
+    color: #fff;
+}
+
+/* Card para participantes / listas */
+.list-group-item {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.list-group-item:hover {
+    background-color: #f8f4f9;
+}
+
+/* Botão dentro da lista de participantes */
+.list-group-item .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.85rem;
+}
+
+/* Pequeno destaque para títulos */
+h2.text-ceub, h3.text-ceub {
+    font-weight: 600;
+}
+/* ===== Hover animado para botões ===== */
+.btn, .btn-ceub, .btn-rosa, .btn-primary, .btn-danger, .btn-secondary {
+    transition: all 0.3s ease;
+}
+
+.btn:hover, .btn-ceub:hover, .btn-rosa:hover, .btn-primary:hover, .btn-danger:hover, .btn-secondary:hover {
+    transform: translateY(-2px); /* Leve elevação ao passar o mouse */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* ===== Hover animado para itens da lista ===== */
+.list-group-item {
+    transition: all 0.3s ease;
+}
+
+.list-group-item:hover {
+    background-color: #f3e9f4; /* Roxo muito claro como hover */
+    transform: translateX(5px); /* Pequena animação lateral */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* ===== Suavizar transições de cores do botão de certificado ===== */
+.btn-ceub:hover {
+    background-color: #5a0d72; 
+}
+
+/* Hover botão rosa */
+.btn-rosa:hover {
+    background-color: #ff4f9a;
 }

@@ -8,9 +8,11 @@ class User(AbstractUser):
         ('organizer', 'Organizador'),
     )
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='student')
+    phone = models.CharField(max_length=15, blank=True, null=True)
 
     def __str__(self):
         return self.username
+
 
 class Event(models.Model):
     EVENT_TYPE_CHOICES = (
@@ -28,14 +30,23 @@ class Event(models.Model):
     max_participants = models.PositiveIntegerField()
     description = models.TextField()
     organizer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='organized_events')
+    participants = models.ManyToManyField(User, related_name='events_participated', blank=True)
+    banner = models.ImageField(upload_to='event_banners/', null=True, blank=True)
 
     def __str__(self):
         return self.title
+
 
 class Registration(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     registered_at = models.DateTimeField(auto_now_add=True)
+
+
+class Certificate(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    date_issued = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ('user', 'event')

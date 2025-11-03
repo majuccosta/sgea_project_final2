@@ -2,35 +2,55 @@
 {% block title %}Perfil - SGEA{% endblock %}
 
 {% block content %}
-  <div class="container" style="max-width: 600px; margin: 3rem auto;">
-    <h2 style="color: #43054E; margin-bottom: 1rem;">👤 Meu Perfil</h2>
+<div class="container" style="max-width: 700px; margin: 3rem auto;">
+  <h2 style="color: #43054E; margin-bottom: 1rem;">👤 Meu Perfil</h2>
 
-    <div style="background-color: #fff; border-left: 6px solid #E63973; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-      <p><strong>Usuário:</strong> {{ user.username }}</p>
-      <p><strong>Nome:</strong> {{ user.first_name }}</p>
-      <p><strong>Email:</strong> {{ user.email }}</p>
+  <div style="background-color: #fff; border-left: 6px solid #E63973; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+    <p><strong>Usuário:</strong> {{ user.username }}</p>
+    <p><strong>Nome:</strong> {{ user.first_name }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Telefone:</strong> {{ user.phone|default:"Não informado" }}</p>
 
-      {% if user.profile.course %}
-        <p><strong>Curso:</strong> {{ user.profile.course }}</p>
+    <hr style="margin: 1.5rem 0;">
+
+    {% if user.role == 'organizer' %}
+      <h4 style="color: #43054E;">📌 Meus Eventos Organizados</h4>
+      {% if organized_events %}
+        <div style="display: grid; gap: 1rem;">
+          {% for event in organized_events %}
+            <div style="border: 1px solid #E63973; border-radius: 12px; padding: 1rem; background-color: #FDF6F9; box-shadow: 0 1px 5px rgba(0,0,0,0.05);">
+              <h5 style="margin: 0 0 0.5rem 0;">{{ event.title }}</h5>
+              <p style="margin: 0.2rem 0;"><strong>Tipo:</strong> {{ event.get_event_type_display }}</p>
+              <p style="margin: 0.2rem 0;"><strong>Data:</strong> {{ event.start_date }} - {{ event.end_date }}</p>
+              <p style="margin: 0.2rem 0;"><strong>Local:</strong> {{ event.location }}</p>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p>Ainda não criou nenhum evento.</p>
       {% endif %}
-
-      <hr style="margin: 1.5rem 0;">
-
+    {% else %}
       <h4 style="color: #43054E;">📅 Meus Eventos Inscritos</h4>
       {% if registered_events %}
-        <ul>
+        <div style="display: grid; gap: 1rem;">
           {% for event in registered_events %}
-            <li>{{ event.title }} — {{ event.start_date }}</li>
+            <div style="border: 1px solid #E63973; border-radius: 12px; padding: 1rem; background-color: #FDF6F9; box-shadow: 0 1px 5px rgba(0,0,0,0.05);">
+              <h5 style="margin: 0 0 0.5rem 0;">{{ event.title }}</h5>
+              <p style="margin: 0.2rem 0;"><strong>Tipo:</strong> {{ event.get_event_type_display }}</p>
+              <p style="margin: 0.2rem 0;"><strong>Data:</strong> {{ event.start_date }} - {{ event.end_date }}</p>
+              <p style="margin: 0.2rem 0;"><strong>Local:</strong> {{ event.location }}</p>
+            </div>
           {% endfor %}
-        </ul>
+        </div>
       {% else %}
-        <p class="no-events">Você ainda não está inscrito em nenhum evento.</p>
+        <p>Você ainda não está inscrito em nenhum evento.</p>
       {% endif %}
+    {% endif %}
 
-      <div style="margin-top: 2rem; text-align: center;">
-        <a href="{% url 'core:edit_profile' %}" class="btn">✏️ Editar perfil</a>
-        <a href="{% url 'core:logout' %}" class="btn" style="background-color: #ccc; color: #43054E; margin-left: 1rem;">Sair</a>
-      </div>
+    <div style="margin-top: 2rem; text-align: center;">
+      <a href="{% url 'core:edit_profile' %}" class="btn">✏️ Editar perfil</a>
+      <a href="{% url 'core:logout' %}" class="btn" style="background-color: #ccc; color: #43054E; margin-left: 1rem;">Sair</a>
     </div>
   </div>
+</div>
 {% endblock %}

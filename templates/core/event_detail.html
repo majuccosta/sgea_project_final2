@@ -2,29 +2,60 @@
 {% block title %}{{ event.title }} - SGEA{% endblock %}
 
 {% block content %}
-  <div class="container" style="max-width: 600px; margin: 3rem auto;">
-    <h2 style="color: #43054E; margin-bottom: 1rem;">📌 {{ event.title }}</h2>
+<div class="container" style="max-width: 700px; margin: 3rem auto;">
+  <div class="card shadow-sm border-0">
+    <div class="card-body">
 
-    <div style="background-color: #fff; border-left: 6px solid #E63973; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+      <!-- Banner do evento -->
+      {% if event.banner %}
+      <div style="text-align: center; margin-bottom: 1.5rem;">
+        <img src="{{ event.banner.url }}" alt="Banner do evento"
+             style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+      </div>
+      {% endif %}
+
+      <h2 class="text-ceub mb-3">📌 {{ event.title }}</h2>
       <p><strong>📂 Tipo:</strong> {{ event.get_event_type_display }}</p>
       <p><strong>🗓 Data:</strong> {{ event.start_date }} às {{ event.start_time }}</p>
       <p><strong>📍 Local:</strong> {{ event.location }}</p>
       <p><strong>👤 Responsável:</strong> {{ event.organizer }}</p>
 
       {% if event.description %}
-        <hr style="margin: 1.5rem 0;">
-        <p style="font-size: 0.95rem;">{{ event.description }}</p>
+      <hr>
+      <p>{{ event.description }}</p>
       {% endif %}
 
-      <form method="post" style="margin-top: 2rem; text-align: center;">
+      <!-- Form de inscrição/cancelamento (apenas alunos/professores) -->
+      {% if request.user.role != 'organizer' %}
+      <form method="post" class="d-flex justify-content-center mt-3">
         {% csrf_token %}
         {% if registered %}
-          <button type="submit" name="unsubscribe" class="btn highlight">❌ Cancelar inscrição</button>
+          <button type="submit" name="unsubscribe" class="btn btn-danger me-2">❌ Cancelar inscrição</button>
         {% else %}
-          <button type="submit" name="subscribe" class="btn">✅ Inscrever-se</button>
+          <button type="submit" name="subscribe" class="btn btn-primary me-2">✅ Inscrever-se</button>
         {% endif %}
-        <a href="{% url 'core:events' %}" class="btn" style="background-color: #ccc; color: #43054E; margin-left: 1rem;">Voltar</a>
+        <a href="{% url 'core:events' %}" class="btn btn-secondary">Voltar</a>
       </form>
+      {% endif %}
+
+      <!-- Lista de participantes (qualquer organizador) -->
+      {% if is_organizer %}
+      <hr class="my-4">
+      <h3 class="text-ceub mb-3">👥 Participantes</h3>
+      <div class="list-group">
+        {% for participant in participants %}
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+          <span>{{ participant.get_full_name|default:participant.username }}</span>
+          <a href="{% url 'core:emitir_certificado' event.id participant.id %}" 
+             class="btn btn-ceub btn-sm">🎓 Emitir Certificado</a>
+        </div>
+        {% empty %}
+        <div class="list-group-item">Nenhum participante inscrito ainda.</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
     </div>
   </div>
+</div>
 {% endblock %}

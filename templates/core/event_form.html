@@ -2,26 +2,54 @@
 {% block title %}Novo Evento - SGEA{% endblock %}
 
 {% block content %}
-  <div class="container" style="max-width: 700px; margin: 3rem auto;">
-    <h2 style="color: #43054E; margin-bottom: 1rem;">📝 Criar Novo Evento</h2>
+<div class="container" style="max-width: 700px; margin: 3rem auto;">
+  <h2 style="color: #43054E; margin-bottom: 1rem;">📝 Criar Novo Evento</h2>
 
-    <div style="background-color: #fff; border-left: 6px solid #E63973; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-      <form method="post">
-        {% csrf_token %}
-        {% for field in form %}
-          <div class="form-group" style="margin-bottom: 1.2rem;">
-            <label style="display: block; font-weight: bold; margin-bottom: 0.3rem; color: #43054E;">{{ field.label }}</label>
-            {{ field }}
-            {% if field.errors %}
-              <div class="form-error" style="color: #E63973; font-size: 0.85rem; margin-top: 0.3rem;">{{ field.errors }}</div>
-            {% endif %}
-          </div>
-        {% endfor %}
-        <div style="text-align: center; margin-top: 2rem;">
-          <button type="submit" class="btn highlight">Criar Evento</button>
-          <a href="{% url 'core:events' %}" class="btn cancel" style="margin-left: 1rem;">Cancelar</a>
+  <div style="background-color: #fff; border-left: 6px solid #E63973; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="form-group" style="margin-bottom: 1.2rem;">
+        <label style="display: block; font-weight: bold; margin-bottom: 0.3rem; color: #43054E;">
+          {{ field.label }}
+        </label>
+        {{ field }}
+        {% if field.errors %}
+        <div class="form-error" style="color: #E63973; font-size: 0.85rem; margin-top: 0.3rem;">
+          {{ field.errors }}
         </div>
-      </form>
-    </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+
+      <div style="text-align: center; margin-top: 2rem;">
+        <button type="submit" class="btn highlight">Criar Evento</button>
+        <a href="{% url 'core:events' %}" class="btn cancel" style="margin-left: 1rem;">Cancelar</a>
+      </div>
+    </form>
   </div>
+</div>
+
+<!-- Flatpickr CSS e JS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<!-- jQuery e Mask -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+
+<script>
+$(document).ready(function(){
+    // Flatpickr para datas
+    flatpickr("#id_start_date", { dateFormat: "Y-m-d", minDate: "today" });
+    flatpickr("#id_end_date", { dateFormat: "Y-m-d", minDate: "today" });
+
+    // Flatpickr para horários (timepicker)
+    flatpickr("#id_start_time", { enableTime: true, noCalendar: true, dateFormat: "H:i" });
+    flatpickr("#id_end_time", { enableTime: true, noCalendar: true, dateFormat: "H:i" });
+
+    // Máscara para telefone
+    $("#id_phone").mask("(00) 00000-0000");
+});
+</script>
 {% endblock %}
