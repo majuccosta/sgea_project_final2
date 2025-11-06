@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Confirmar Exclusão{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px; margin-top: 3rem;">
+  <div class="form-section" style="text-align: center;">
+    <h2 class="text-ceub">Tem certeza que deseja excluir o evento <strong>{{ event.title }}</strong>?</h2>
+
+    <p style="margin-top: 1rem;">Esta ação não poderá ser desfeita.</p>
+
+    <form method="post" style="margin-top: 2rem;">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-rosa" style="margin-right: 10px;">Confirmar</button>
+      <a href="{% url 'core:events' %}" class="btn cancel">Cancelar</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Excluir Evento - SGEA{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px; margin-top: 50px;">
+  <div class="card shadow-sm border-0">
+    <div class="card-body text-center">
+
+      <h3 class="text-danger fw-bold mb-3">🗑️ Excluir Evento</h3>
+
+      <p class="mb-4">
+        Tem certeza que deseja excluir o evento <strong>"{{ event.title }}"</strong>?
+        <br>
+        <small class="text-muted">Esta ação não pode ser desfeita.</small>
+      </p>
+
+      <form method="post">
+        {% csrf_token %}
+
+        <a href="{% url 'core:event_detail' event.id %}" class="btn btn-secondary me-2">
+          Cancelar
+        </a>
+
+        <button type="submit" class="btn btn-danger">
+          Confirmar Exclusão
+        </button>
+      </form>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

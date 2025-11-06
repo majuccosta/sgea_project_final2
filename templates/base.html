@@ -4,24 +4,43 @@
 <head>
   <meta charset="UTF-8">
   <title>{% block title %}SGEA{% endblock %}</title>
-  <link rel="stylesheet" href="{% static 'css/style.css' %}">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Roboto+Slab:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 
+  <!-- ✅ CSS principal -->
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+  <!-- ✅ Fontes Google (Lato e Roboto Slab) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link 
+    href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Roboto+Slab:wght@500;700&display=swap" 
+    rel="stylesheet"
+  >
+
+  <!-- ✅ jQuery + jQuery UI -->
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+
+  <!-- ✅ Garante que a fonte seja aplicada globalmente -->
+  <style>
+    body {
+      font-family: 'Lato', 'Roboto Slab', sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+  </style>
 </head>
 <body>
   <div class="body-wrapper">
-    <!-- Cabeçalho -->
+
+    <!-- ✅ Cabeçalho -->
     <header>
       <div class="logo">
-  <a href="{% url 'core:home' %}">
-    <img src="{% static 'image/sgea.png' %}" alt="Logo SGEA" style="height: 80px;">
-  </a>
-</div>
+        <a href="{% url 'core:home' %}">
+          <img src="{% static 'image/sgea.png' %}" alt="Logo SGEA" style="height: 80px;">
+        </a>
+      </div>
 
       <nav>
         <a href="{% url 'core:home' %}" class="btn">Home</a>
@@ -31,21 +50,23 @@
           <a href="{% url 'core:logout' %}" class="btn cancel">Sair</a>
         {% else %}
           <a href="{% url 'core:login' %}" class="btn">Entrar</a>
-          
         {% endif %}
       </nav>
     </header>
 
-    <!-- Conteúdo principal -->
+    <!-- ✅ Conteúdo principal -->
     <main>
       {% block content %}{% endblock %}
       <div style="height: 1px;"></div>
     </main>
 
-    <!-- Rodapé -->
+    <!-- ✅ Rodapé -->
     <footer>
       <p>&copy; {{ now.year }} SGEA - CEUB. Todos os direitos reservados.</p>
     </footer>
   </div>
+
+  <!-- ✅ Bootstrap JS no final (sem travar o Confirm Delete) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
