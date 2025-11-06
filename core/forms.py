@@ -136,9 +136,16 @@ class EventForm(forms.ModelForm):
 
     def clean_banner(self):
         banner = self.cleaned_data.get('banner')
-        if banner:
-            if not banner.content_type.startswith('image'):
-                raise ValidationError("O arquivo deve ser uma imagem (jpg, png, etc).")
-            if banner.size > 5 * 1024 * 1024:
-                raise ValidationError("O tamanho da imagem não pode ultrapassar 5MB.")
+
+    # Se o usuário não enviou um novo banner (em edição), tudo bem
+        if not banner:
+           return banner
+
+    # Se for um arquivo novo (upload), ele terá o atributo 'content_type'
+        if hasattr(banner, 'content_type'):
+           if not banner.content_type.startswith('image'):
+            raise ValidationError("O arquivo deve ser uma imagem (jpg, png, etc).")
+        if banner.size > 5 * 1024 * 1024:  # limite de 5MB
+            raise ValidationError("O tamanho da imagem não pode ultrapassar 5MB.")
+
         return banner
