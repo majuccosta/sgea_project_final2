@@ -38,7 +38,7 @@ urlpatterns = [
     path('api/events/create/', views.EventCreateAPI.as_view(), name='api_event_create'),
     path('api/events/<int:event_id>/register/', views.EventRegisterAPI.as_view(), name='api_event_register'),
     path('api/events/<int:event_id>/cancel/', EventCancelAPI.as_view(), name='api_event_cancel'),
-    path('api/my-events/', MyEventsAPI.as_view(), name='api_my_events'),
+    path('api/my-events/', MyEventsAPI.as_view(), name='api_my_events')
 ]
 
 if settings.DEBUG:

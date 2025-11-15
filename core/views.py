@@ -1,6 +1,6 @@
 from datetime import datetime, date
 import os
-
+from .utils import send_welcome_email
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate, get_user_model
@@ -31,7 +31,9 @@ from reportlab.lib.utils import ImageReader
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import Paragraph, Frame
 from reportlab.lib.enums import TA_JUSTIFY
-
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 User = get_user_model()
 
@@ -103,20 +105,44 @@ def edit_profile_view(request):
     return render(request, 'core/edit_profile.html', {'form': form})
 
 
-# ---------------- AUTH -----------------
+# ---------------- AUTH ----------------
+
 def register_view(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
-            messages.success(request, "Cadastro realizado!")
+
+            # --- Envio do e-mail de boas-vindas ---
+            subject = "Bem-vindo ao SGEA 🎓"
+            context = {
+                'user': user,
+                'link': 'http://127.0.0.1:8000/login/',  # ou o link do seu site real
+            }
+            html_message = render_to_string('core/welcome_email.html', context)
+            plain_message = strip_tags(html_message)
+
+            send_mail(
+                subject,
+                plain_message,
+                'majucosta835@gmail.com',  # remetente
+                [user.email],              # destinatário (o e-mail cadastrado)
+                html_message=html_message,
+                fail_silently=False,
+            )
+            # --------------------------------------
+
+            messages.success(request, "Cadastro realizado com sucesso! Um e-mail de confirmação foi enviado.")
             return redirect('core:home')
-        messages.error(request, "Corrija os erros.")
+
+        messages.error(request, "Corrija os erros abaixo.")
     else:
         form = RegisterForm()
 
     return render(request, 'core/signup.html', {'form': form})
+
+
 
 
 def login_view(request):
@@ -327,3 +353,5 @@ class MyEventsAPI(APIView):
     def get(self, request):
         events = Event.objects.filter(participants=request.user)
         return Response(EventSerializer(events, many=True).data)
+
+
