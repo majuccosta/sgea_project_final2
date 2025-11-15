@@ -1,1 +1,7 @@
-db.sqlite3 
+# Ignore banco de dados
+db.sqlite3
+
+# Ignore arquivos compilados
+__pycache__/
+*.pyc
+
