@@ -19,7 +19,10 @@ class Event(models.Model):
         ('workshop', 'Workshop'),
         ('lecture', 'Palestra'),
         ('seminar', 'Seminário'),
+        ('educational_week', 'Semana Educativa'),
+        ('minicourse', 'Minicurso'),
     )
+
     title = models.CharField(max_length=255)
     event_type = models.CharField(max_length=50, choices=EVENT_TYPE_CHOICES)
     start_date = models.DateField()
@@ -35,6 +38,7 @@ class Event(models.Model):
 
     def __str__(self):
         return self.title
+
 
 
 class Registration(models.Model):

@@ -59,6 +59,7 @@ class LoginForm(forms.Form):
 
 # ------------------ EVENT FORM ------------------
 # ------------------ EVENT FORM ------------------
+
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
@@ -68,7 +69,6 @@ class EventForm(forms.ModelForm):
             'max_participants', 'banner'
         ]
 
-        # 🏷️ Rótulos em português
         labels = {
             'title': 'Título do Evento',
             'event_type': 'Tipo de Evento',
@@ -82,35 +82,29 @@ class EventForm(forms.ModelForm):
             'banner': 'Banner do Evento',
         }
 
-        # ✏️ Campos personalizados com placeholders e tipos corretos
         widgets = {
-            'title': forms.TextInput(attrs={
-                'placeholder': 'Digite o título do evento'
-            }),
+            'title': forms.TextInput(attrs={'placeholder': 'Digite o título do evento'}),
             'event_type': forms.Select(),
-            'start_date': forms.DateInput(attrs={
-                'type': 'date'
-            }),
-            'end_date': forms.DateInput(attrs={
-                'type': 'date'
-            }),
-            'start_time': forms.TimeInput(attrs={
-                'type': 'time'
-            }),
-            'end_time': forms.TimeInput(attrs={
-                'type': 'time'
-            }),
-            'location': forms.TextInput(attrs={
-                'placeholder': 'Digite o local do evento'
-            }),
-            'description': forms.Textarea(attrs={
-                'placeholder': 'Descreva brevemente o evento...',
-                'rows': 3
-            }),
-            'max_participants': forms.NumberInput(attrs={
-                'placeholder': 'Ex: 50'
-            }),
+            'start_date': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date'}),
+            'end_date': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date'}),
+            'start_time': forms.TimeInput(format='%H:%M', attrs={'type': 'time'}),
+            'end_time': forms.TimeInput(format='%H:%M', attrs={'type': 'time'}),
+            'location': forms.TextInput(attrs={'placeholder': 'Digite o local do evento'}),
+            'description': forms.Textarea(attrs={'placeholder': 'Descreva brevemente o evento...', 'rows': 3}),
+            'max_participants': forms.NumberInput(attrs={'placeholder': 'Ex: 50'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # 🔁 Preenche automaticamente os campos ao editar
+        for field in ['start_date', 'end_date']:
+            if self.instance and getattr(self.instance, field):
+                self.fields[field].initial = getattr(self.instance, field).strftime('%Y-%m-%d')
+
+        for field in ['start_time', 'end_time']:
+            if self.instance and getattr(self.instance, field):
+                self.fields[field].initial = getattr(self.instance, field).strftime('%H:%M')
 
     def clean(self):
         cleaned_data = super().clean()
@@ -119,15 +113,12 @@ class EventForm(forms.ModelForm):
         start_time = cleaned_data.get('start_time')
         end_time = cleaned_data.get('end_time')
 
-        # 🚫 Data de início não pode ser anterior a hoje
         if start_date and start_date < datetime.date.today():
             raise ValidationError("⚠️ A data de início não pode ser anterior a hoje.")
 
-        # 🚫 Data de término não pode ser anterior à data de início
         if start_date and end_date and end_date < start_date:
             raise ValidationError("⚠️ A data de término não pode ser anterior à data de início.")
 
-        # 🚫 Hora de término deve ser posterior à hora de início (no mesmo dia)
         if start_date == end_date and start_time and end_time:
             if end_time <= start_time:
                 raise ValidationError("⚠️ A hora de término deve ser posterior à hora de início.")
@@ -137,15 +128,15 @@ class EventForm(forms.ModelForm):
     def clean_banner(self):
         banner = self.cleaned_data.get('banner')
 
-    # Se o usuário não enviou um novo banner (em edição), tudo bem
+        # Se o usuário não enviou um novo banner, mantém o antigo
         if not banner:
-           return banner
+            return banner
 
-    # Se for um arquivo novo (upload), ele terá o atributo 'content_type'
         if hasattr(banner, 'content_type'):
-           if not banner.content_type.startswith('image'):
-            raise ValidationError("O arquivo deve ser uma imagem (jpg, png, etc).")
-        if banner.size > 5 * 1024 * 1024:  # limite de 5MB
+            if not banner.content_type.startswith('image'):
+                raise ValidationError("O arquivo deve ser uma imagem (jpg, png, etc).")
+
+        if banner.size > 5 * 1024 * 1024:
             raise ValidationError("O tamanho da imagem não pode ultrapassar 5MB.")
 
         return banner
