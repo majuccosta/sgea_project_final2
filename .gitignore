@@ -1,7 +1,5 @@
-# Ignore banco de dados
 db.sqlite3
-
-# Ignore arquivos compilados
 __pycache__/
 *.pyc
-
+media/
+venv/
