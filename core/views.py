@@ -126,7 +126,7 @@ def register_view(request):
             send_mail(
                 subject,
                 plain_message,
-                'majucosta835@gmail.com',  # remetente
+                'emailusuarioteste2025@gmail.com',  # remetente
                 [user.email],              # destinatário (o e-mail cadastrado)
                 html_message=html_message,
                 fail_silently=False,
