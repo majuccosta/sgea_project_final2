@@ -127,5 +127,5 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'emailusuarioteste2025@gmail.com'
-EMAIL_HOST_PASSWORD = 'thng dvdd xgpb bpwb'  # senha de app do Gmail
+EMAIL_HOST_PASSWORD = 'thng dvdd xgpb bpwb'  # senha de app do Gmail 
 DEFAULT_FROM_EMAIL = 'SGEA <emailusuarioteste2025@gmail.com>'
