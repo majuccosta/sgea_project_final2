@@ -2,6 +2,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from .views import preview_email
 
 from . import views
 from .views import MyEventsAPI, EventCancelAPI
@@ -38,7 +39,8 @@ urlpatterns = [
     path('api/events/create/', views.EventCreateAPI.as_view(), name='api_event_create'),
     path('api/events/<int:event_id>/register/', views.EventRegisterAPI.as_view(), name='api_event_register'),
     path('api/events/<int:event_id>/cancel/', EventCancelAPI.as_view(), name='api_event_cancel'),
-    path('api/my-events/', MyEventsAPI.as_view(), name='api_my_events')
+    path('api/my-events/', MyEventsAPI.as_view(), name='api_my_events'),
+    path("preview-email/", preview_email, name="preview_email")
 ]
 
 if settings.DEBUG:

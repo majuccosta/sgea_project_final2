@@ -1,15 +1,75 @@
 <!DOCTYPE html>
-<html>
-  <body style="font-family: Arial, sans-serif; background-color: #f8f8f8; padding: 20px;">
-    <div style="max-width: 500px; margin: auto; background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
-      <img src="https://i.imgur.com/3v4Jj4L.png" alt="Logo SGEA" style="width: 100px; display: block; margin: auto;">
-      <h2 style="text-align:center; color:#43054E;">Bem-vindo ao SGEA, {{ user.first_name|default:user.username }}!</h2>
-      <p>Seu cadastro foi concluído com sucesso 🎉</p>
-      <p>Agora você pode acessar o sistema usando o link abaixo:</p>
-      <p style="text-align:center;">
-        <a href="{{ link }}" style="background:#43054E; color:white; padding:10px 20px; border-radius:5px; text-decoration:none;">Acessar o Sistema</a>
-      </p>
-      <p style="text-align:center; color:#555;">Atenciosamente,<br>Equipe SGEA</p>
-    </div>
-  </body>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Bem-vindo ao SGEA</title>
+</head>
+
+<body style="margin:0; padding:0; background:#f5f5f7; font-family:Arial, sans-serif;">
+
+    <table align="center" width="100%" cellpadding="0" cellspacing="0" style="padding: 40px 0;">
+        <tr>
+            <td align="center">
+
+                <table width="600" cellpadding="0" cellspacing="0" style="background:white; border-radius:8px; overflow:hidden;">
+
+                    <tr>
+                        <td align="center" style="background:#43054E; padding:25px 0; color:white;">
+                            <h1 style="margin:0; font-size:22px;">
+                                Sistema de Gestão de Eventos Acadêmicos
+                            </h1>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="padding: 30px 40px; font-size:16px; color:#333; line-height:1.6;">
+                            
+                            <h2 style="color:#43054E; margin-top:0;">
+                                Bem-vindo ao SGEA, {{ user.first_name|default:user.username }}!
+                            </h2>
+
+                            <p>
+                                Seu cadastro foi concluído com sucesso 🎉  
+                                Agora você já pode acessar o sistema.
+                            </p>
+
+                            <p style="text-align:center; margin:35px 0;">
+                                <a href="{{ link }}" 
+                                   style="
+                                        background:#43054E;
+                                        padding:12px 25px;
+                                        color:white;
+                                        text-decoration:none;
+                                        border-radius:6px;
+                                        font-size:16px;
+                                        font-weight:bold;">
+                                    Acessar o Sistema
+                                </a>
+                            </p>
+
+                            <p>
+                                Caso não tenha solicitado o cadastro, ignore este e-mail.
+                            </p>
+
+                            <p style="margin-top:40px;">
+                                Atenciosamente, <br>
+                                <strong>Equipe SGEA</strong>
+                            </p>
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td align="center" style="background:#f0f0f0; padding:15px; color:#777; font-size:13px;">
+                            © 2025 SGEA – Todos os direitos reservados.
+                        </td>
+                    </tr>
+
+                </table>
+
+            </td>
+        </tr>
+    </table>
+
+</body>
 </html>
