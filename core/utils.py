@@ -1,6 +1,7 @@
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.conf import settings
+from .models import AuditLog
 
 def send_welcome_email(user):
     subject = "🎉 Bem-vindo(a) ao SGEA!"
@@ -20,3 +21,12 @@ def send_welcome_email(user):
     msg = EmailMultiAlternatives(subject, '', from_email, to)
     msg.attach_alternative(html_content, "text/html")
     msg.send()
+
+def registrar_log(user, action, model, object_id, description):
+    AuditLog.objects.create(
+        user=user,
+        action=action,
+        model=model,
+        object_id=str(object_id),
+        description=description
+    )

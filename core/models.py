@@ -57,3 +57,20 @@ class Certificate(models.Model):
 
     def __str__(self):
         return f"{self.user.username} -> {self.event.title}"
+    
+class AuditLog(models.Model):
+    ACTION_CHOICES = [
+        ('CREATE', 'Criação'),
+        ('UPDATE', 'Atualização'),
+        ('DELETE', 'Exclusão'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    action = models.CharField(max_length=20, choices=ACTION_CHOICES)
+    model = models.CharField(max_length=50)  # Ex: User, Event, Registration
+    object_id = models.CharField(max_length=50)  # ID do objeto alterado
+    description = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.model} - {self.action} - {self.timestamp}"

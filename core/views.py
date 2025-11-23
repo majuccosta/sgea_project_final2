@@ -29,6 +29,13 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
+# Auditoria
+from .utils import registrar_log
+
+# organizador visualizar logs
+
+from .models import AuditLog
+
 User = get_user_model()
 
 
@@ -336,3 +343,16 @@ def preview_email(request):
         "link": "http://127.0.0.1:8000/login/"
     }
     return render(request, "core/welcome_email.html", context)
+
+# ---------------- AUDITORIA ----------------
+@login_required
+def audit_logs(request):
+    if request.user.role != "organizer":
+        messages.error(request, "Apenas organizadores podem visualizar os logs.")
+        return redirect("core:home")
+
+    logs = AuditLog.objects.all().order_by('-timestamp')
+    return render(request, "core/audit_logs.html", {"logs": logs})
+
+
+
