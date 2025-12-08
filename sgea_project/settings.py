@@ -8,6 +8,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'sua_chave_secreta_aqui'  # substitua por uma chave real
 DEBUG = True
 ALLOWED_HOSTS = []
+# settings.py
+
+# URL base do sistema (ajuste conforme ambiente)
+BASE_URL = "http://127.0.0.1:8000"   # em produção pode ser https://meusistema.com
+
+# Caminho dos arquivos estáticos
+STATIC_URL = "/static/"
 
 # ---------------- Apps ----------------
 INSTALLED_APPS = [
@@ -21,15 +28,23 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'core',  # seu app principal
 ]
-
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
-    )
+    ),
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.ScopedRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'events_list': '20/day',       # limite de consultas de eventos
+        'events_register': '50/day',   # limite de inscrições
+    }
 }
+
+
 
 # ---------------- Middlewares ----------------
 MIDDLEWARE = [
@@ -79,7 +94,8 @@ AUTH_USER_MODEL = 'core.User'
 # ---------------- Senhas ----------------
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {'min_length': 4},  # só exige 4 caracteres',
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
@@ -129,3 +145,5 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'emailusuarioteste2025@gmail.com'
 EMAIL_HOST_PASSWORD = 'thng dvdd xgpb bpwb'  # senha de app do Gmail 
 DEFAULT_FROM_EMAIL = 'SGEA <emailusuarioteste2025@gmail.com>'
+
+

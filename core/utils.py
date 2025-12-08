@@ -3,26 +3,23 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from .models import AuditLog
 
-def send_welcome_email(user):
+def send_welcome_email(user, link):
     subject = "🎉 Bem-vindo(a) ao SGEA!"
     from_email = settings.DEFAULT_FROM_EMAIL
     to = [user.email]
 
-    # Dados que serão enviados ao template do e-mail
     context = {
         'user': user,
-        'login_url': 'http://127.0.0.1:8000/login/',  # ajuste conforme o domínio real
+        'link': link,
+        'logo_url': settings.BASE_URL + settings.STATIC_URL + 'img/logo_sgea.png'
     }
 
-    # Gera o HTML do e-mail
-    html_content = render_to_string('emails/welcome_email.html', context)
-
-    # Cria a mensagem
+    html_content = render_to_string('core/welcome_email.html', context)
     msg = EmailMultiAlternatives(subject, '', from_email, to)
     msg.attach_alternative(html_content, "text/html")
     msg.send()
 
-def registrar_log(user, action, model, object_id, description):
+def registrar_log(user=None, action="", model="", object_id="", description=""):
     AuditLog.objects.create(
         user=user,
         action=action,

@@ -1,6 +1,7 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Roboto+Slab:wght@500;700&display=swap');
 
-/* Reset e estrutura base */
+/* ===== Reset e estrutura base ===== */
 html, body {
   height: 100%;
   margin: 0;
@@ -15,21 +16,21 @@ body {
   line-height: 1.6;
 }
 
-/* Títulos */
+/* ===== Títulos ===== */
 h1, h2, h3, h4 {
   font-family: 'Roboto Slab', serif;
   color: #43054E;
   margin-bottom: 1rem;
 }
 
-/* Containers */
+/* ===== Containers ===== */
 .container {
   max-width: 900px;
   margin: 2rem auto 1rem auto;
   padding: 0 1rem;
 }
 
-/* Cabeçalho */
+/* ===== Cabeçalho ===== */
 header {
   background-color: #43054E;
   color: white;
@@ -37,24 +38,11 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  min-height: 20px;
-  box-sizing: border-box;
-  margin: 0;
 }
 
 .logo img {
-  display: block;
   height: 40px;
   object-fit: contain;
-}
-
-.logo a {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: white;
-  text-decoration: none;
-  margin: 0;
-  padding: 0;
 }
 
 nav {
@@ -84,23 +72,17 @@ nav a.btn.cancel {
   color: #43054E;
 }
 
-nav a.btn.highlight {
-  background-color: #43054E;
-}
-
-/* Rodapé */
+/* ===== Rodapé ===== */
 footer {
   background-color: #43054E;
   color: white;
   text-align: center;
   padding: 0.8rem 1rem;
   font-size: 0.85rem;
-  width: 100%;
   margin-top: 2rem;
 }
 
-
-/* Estrutura flexível */
+/* ===== Estrutura flexível ===== */
 .body-wrapper {
   min-height: 100%;
   display: flex;
@@ -109,30 +91,39 @@ footer {
 
 main {
   flex: 1;
-  margin-top: 0;
-  padding-top: 0;
 }
 
-/* Welcome box */
-.welcome-box {
+/* ===== Caixas de boas-vindas / avisos ===== */
+.welcome-box,
+.avisos-box,
+.form-section,
+.profile-section {
   background-color: #fff;
-  padding: 3rem;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-  text-align: center;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
   margin-bottom: 3rem;
+}
+
+.welcome-box {
+  padding: 3rem;
+  text-align: center;
 }
 
 .welcome-box h1 {
   font-size: 2.4rem;
 }
 
-.welcome-box p {
-  font-size: 1rem;
-  color: #444;
+.avisos-box {
+  border-left: 4px solid #E63973;
 }
 
-/* Event cards */
+.form-section,
+.profile-section {
+  border-left: 6px solid #E63973;
+}
+
+/* ===== Cards de eventos ===== */
 .event-card {
   background-color: #fff;
   padding: 1.5rem;
@@ -146,35 +137,7 @@ main {
   margin-bottom: 0.5rem;
 }
 
-.event-card p {
-  margin: 0.3rem 0;
-}
-
-/* Avisos */
-.avisos-box {
-  background-color: #fff;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-  border-left: 4px solid #E63973;
-  margin-top: 3rem;
-}
-
-.avisos-box h3 {
-  margin-bottom: 1rem;
-}
-
-/* Form blocks */
-.form-section,
-.profile-section {
-  background-color: #fff;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-  border-left: 6px solid #E63973;
-  margin-bottom: 3rem;
-}
-
+/* ===== Formulários ===== */
 .form-group {
   margin-bottom: 1.2rem;
 }
@@ -192,7 +155,7 @@ main {
   margin-top: 0.3rem;
 }
 
-/* Botões */
+/* ===== Botões ===== */
 .btn {
   display: inline-block;
   background-color: #E63973;
@@ -205,11 +168,13 @@ main {
   cursor: pointer;
   font-weight: bold;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  transition: background-color 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .btn:hover {
   background-color: #d12f65;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .btn.highlight {
@@ -219,91 +184,72 @@ main {
 .btn.cancel {
   background-color: #ccc;
   color: #43054E;
-}/* ===== Novas classes para SGEA e Certificados ===== */
-
-/* Texto roxo SGEA */
-.text-ceub {
-    color: #43054E !important;
 }
 
-/* Botão roxo personalizado */
+/* Botões extras */
 .btn-ceub {
-    background-color: #43054E;
-    color: #fff;
-    border: none;
-    transition: background-color 0.3s ease;
+  background-color: #43054E;
+  color: #fff;
 }
 
 .btn-ceub:hover {
-    background-color: #5a0d72; /* Roxo mais claro ao passar o mouse */
-    color: #fff;
+  background-color: #5a0d72;
 }
 
-/* Botão rosa personalizado */
 .btn-rosa {
-    background-color: #E63973;
-    color: #fff;
-    border: none;
-    transition: background-color 0.3s ease;
+  background-color: #E63973;
+  color: #fff;
 }
 
 .btn-rosa:hover {
-    background-color: #ff4f9a; /* Rosa mais claro */
-    color: #fff;
+  background-color: #ff4f9a;
 }
 
-/* Card para participantes / listas */
+/* ===== Listas ===== */
 .list-group-item {
-    border: 1px solid #eee;
-    border-radius: 8px;
-    margin-bottom: 0.5rem;
-    padding: 0.75rem 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  padding: 0.75rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
 }
 
 .list-group-item:hover {
-    background-color: #f8f4f9;
+  background-color: #f3e9f4;
+  transform: translateX(5px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
-/* Botão dentro da lista de participantes */
-.list-group-item .btn {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.85rem;
+/* ===== Mensagens (alertas) ===== */
+.custom-alert {
+  background-color: #5a0d72; /* cor da caixinha */
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 20px;
+  margin: 15px auto;   /* centraliza horizontalmente */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  font-weight: bold;
+  width: fit-content;  /* largura só do conteúdo */
+  text-align: center;  /* centraliza o texto dentro */}
+
+.custom-alert .btn-close {
+  position: absolute;
+  top: 50%;              /* posiciona no meio vertical */
+  right: 15px;           /* distância da borda direita */
+  transform: translateY(-50%); /* centraliza verticalmente */
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
 }
 
-/* Pequeno destaque para títulos */
-h2.text-ceub, h3.text-ceub {
-    font-weight: 600;
-}
-/* ===== Hover animado para botões ===== */
-.btn, .btn-ceub, .btn-rosa, .btn-primary, .btn-danger, .btn-secondary {
-    transition: all 0.3s ease;
-}
-
-.btn:hover, .btn-ceub:hover, .btn-rosa:hover, .btn-primary:hover, .btn-danger:hover, .btn-secondary:hover {
-    transform: translateY(-2px); /* Leve elevação ao passar o mouse */
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-
-/* ===== Hover animado para itens da lista ===== */
-.list-group-item {
-    transition: all 0.3s ease;
-}
-
-.list-group-item:hover {
-    background-color: #f3e9f4; /* Roxo muito claro como hover */
-    transform: translateX(5px); /* Pequena animação lateral */
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-
-/* ===== Suavizar transições de cores do botão de certificado ===== */
-.btn-ceub:hover {
-    background-color: #5a0d72; 
-}
-
-/* Hover botão rosa */
-.btn-rosa:hover {
-    background-color: #ff4f9a;
+.custom-alert .btn-close::before {
+  content: "✖";
+  font-size: 1.2rem;
+  color: #fff;
 }

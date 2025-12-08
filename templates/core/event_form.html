@@ -13,7 +13,7 @@
       {% if form.non_field_errors %}
       <div style="background-color: #ffe6ec; color: #b3003c; padding: 10px; border-radius: 8px; margin-bottom: 1rem; font-size: 0.9rem;">
         {% for error in form.non_field_errors %}
-          ⚠️ {{ error }}
+          {{ error }}
         {% endfor %}
       </div>
       {% endif %}
@@ -31,6 +31,9 @@
         {% endif %}
       </div>
       {% endfor %}
+
+      <!-- Preview do banner -->
+      <div id="banner-container" style="margin-bottom:1rem;"></div>
 
       <div style="text-align: center; margin-top: 2rem;">
         <button type="submit" class="btn highlight">Criar Evento</button>
@@ -60,6 +63,28 @@ $(document).ready(function(){
 
     // Máscara para telefone
     $("#id_phone").mask("(00) 00000-0000");
+
+    // Preview do banner
+    $('#id_banner').on('change', function(event){
+        const file = event.target.files[0];
+        if(file){
+            if(!file.type.startsWith('image/')){
+                alert("O arquivo deve ser uma imagem (jpg, png, etc).");
+                $(this).val('');
+                $('#banner-container').empty();
+            } else if(file.size > 5 * 1024 * 1024){
+                alert("O tamanho da imagem não pode ultrapassar 5MB.");
+                $(this).val('');
+                $('#banner-container').empty();
+            } else {
+                const reader = new FileReader();
+                reader.onload = function(e){
+                    $('#banner-container').html('<img src="'+e.target.result+'" style="max-width:100%; margin-top:1rem; border-radius:8px;">');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+    });
 });
 </script>
 {% endblock %}

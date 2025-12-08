@@ -31,9 +31,6 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
 
-    # Certificados
-    path('certificado/<int:event_id>/<int:user_id>/', views.emitir_certificado, name='emitir_certificado'),
-
     # API JWT
     path('api/token/a', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
@@ -50,6 +47,9 @@ urlpatterns = [
 
     # AUDITORIA / LOGS
     path("logs/", audit_logs, name="audit_logs"),
+    path('activate/<uidb64>/', views.activate_user, name='activate_user'),
+    path('event/<int:event_id>/certificado/<int:user_id>/', views.emitir_certificado, name='emitir_certificado'),
+
 ]
 
 if settings.DEBUG:

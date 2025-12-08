@@ -2,36 +2,41 @@
 {% block title %}Criar Conta - SGEA{% endblock %}
 
 {% block content %}
-  <div class="container" style="max-width: 500px; margin: 3rem auto;">
+<div class="container" style="max-width: 500px; margin: 3rem auto;">
     <h2 style="color: #43054E; margin-bottom: 1rem;">📝 Criar Conta</h2>
 
     <div style="background-color: #fff; border-left: 6px solid #E63973; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-      <form method="post">
-        {% csrf_token %}
-        {% for field in form %}
-          <div class="form-group">
-            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-            {{ field }}
-            {% if field.errors %}
-              <div class="form-error" style="color: #E63973; font-size: 0.85rem; margin-top: 0.3rem;">
-                {{ field.errors }}
-              </div>
-            {% endif %}
-          </div>
-        {% endfor %}
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                <small style="color: #555; display: block; margin-top: 0.2rem;">{{ field.help_text }}</small>
+                {% endif %}
+                {% if field.errors %}
+                <div class="form-error" style="color: #E63973; font-size: 0.85rem; margin-top: 0.3rem;">
+                    {{ field.errors }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <div style="margin-top: 2rem; text-align: center;">
+                <button type="submit" class="btn highlight">Cadastrar</button>
+            </div>
+        </form>
 
         <div style="margin-top: 2rem; text-align: center;">
-          <button type="submit" class="btn">Cadastrar</button>
+            <p style="font-size: 0.9rem;">Já tem uma conta?
+                <a href="{% url 'core:login' %}" style="color: #E63973; font-weight: bold;">Entrar</a>
+            </p>
         </div>
-      </form>
-
-      <div style="margin-top: 2rem; text-align: center;">
-        <p style="font-size: 0.9rem;">Já tem uma conta?
-          <a href="{% url 'core:login' %}" style="color: #E63973; font-weight: bold;">Entrar</a>
-        </p>
-      </div>
     </div>
-  </div>
+</div>
+
+<!-- jQuery e Mask -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 
@@ -40,5 +45,4 @@ $(document).ready(function(){
     $('#id_phone').mask('(00) 00000-0000');
 });
 </script>
-
 {% endblock %}

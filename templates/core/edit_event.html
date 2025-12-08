@@ -2,20 +2,41 @@
 {% block title %}Editar Evento - SGEA{% endblock %}
 
 {% block content %}
-<div class="container" style="max-width: 700px; margin-top: 3rem;">
-  <h2>✏️ Editar Evento</h2>
+  <div class="container" style="max-width: 600px; margin: 3rem auto;">
+    <h2 style="color: #43054E; margin-bottom: 1rem;">✏️ Editar Evento</h2>
 
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {% for field in form %}
-      <div class="mb-3">
-        <label><strong>{{ field.label }}</strong></label>
-        {{ field }}
-      </div>
-    {% endfor %}
+    <div style="background-color: #fff; border-left: 6px solid #E63973; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
 
-    <button type="submit" class="btn btn-primary">Salvar alterações</button>
-    <a href="{% url 'core:event_detail' event.id %}" class="btn btn-secondary">Cancelar</a>
-  </form>
-</div>
+        <!-- 🔥 Exibe erros gerais (como horários inválidos) -->
+        {% if form.non_field_errors %}
+        <div style="background-color: #ffe6ec; color: #b3003c; padding: 10px; border-radius: 8px; margin-bottom: 1rem; font-size: 0.9rem;">
+          {% for error in form.non_field_errors %}
+             {{ error }}
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        {% for field in form %}
+          <div class="form-group" style="margin-bottom: 1.2rem;">
+            <label style="display: block; font-weight: bold; margin-bottom: 0.3rem; color: #43054E;">
+              {{ field.label }}
+            </label>
+            {{ field }}
+            {% if field.errors %}
+              <div class="form-error" style="color: #E63973; font-size: 0.85rem; margin-top: 0.3rem;">
+                {{ field.errors }}
+              </div>
+            {% endif %}
+          </div>
+        {% endfor %}
+
+        <div style="text-align: center; margin-top: 2rem;">
+          <button type="submit" class="btn highlight">Salvar Alterações</button>
+          <a href="{% url 'core:event_detail' event.id %}" class="btn cancel" style="margin-left: 1rem;">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </div>
 {% endblock %}
