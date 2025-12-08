@@ -1,13 +1,10 @@
 # Ignore ambiente virtual
 venv/
 
-# Ignore banco de dados
-db.sqlite3
+
 
 # Ignore arquivos compilados
 __pycache__/
 *.pyc
 
-# Ignore media
-media/
 
