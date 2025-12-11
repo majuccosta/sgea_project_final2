@@ -2,9 +2,12 @@
 venv/
 
 
+media/
 
+db.sqlite3
 # Ignore arquivos compilados
 __pycache__/
 *.pyc
+
 
 
