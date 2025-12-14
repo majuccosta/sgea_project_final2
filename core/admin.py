@@ -16,7 +16,7 @@ class EventAdmin(admin.ModelAdmin):
     list_display = ('title', 'event_type', 'start_date', 'end_date', 'location', 'max_participants')
     list_filter = ('event_type', 'start_date')
     search_fields = ('title', 'location')
-    filter_horizontal = ('participants',)  # 👈 mostra os inscritos com widget de seleção
+    filter_horizontal = ('participants',)  
 
 # ---------------- Admin da inscrição ----------------
 @admin.register(Registration)

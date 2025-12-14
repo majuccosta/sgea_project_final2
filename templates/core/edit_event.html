@@ -2,41 +2,92 @@
 {% block title %}Editar Evento - SGEA{% endblock %}
 
 {% block content %}
-  <div class="container" style="max-width: 600px; margin: 3rem auto;">
-    <h2 style="color: #43054E; margin-bottom: 1rem;">✏️ Editar Evento</h2>
+<div class="container" style="max-width: 700px; margin: 3rem auto;">
+  <h2 style="color: #43054E; margin-bottom: 1rem;">✏️ Editar Evento</h2>
 
-    <div style="background-color: #fff; border-left: 6px solid #E63973; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-      <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
+  <div style="background-color: #fff; border-left: 6px solid #E63973; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
 
-        <!-- 🔥 Exibe erros gerais (como horários inválidos) -->
-        {% if form.non_field_errors %}
-        <div style="background-color: #ffe6ec; color: #b3003c; padding: 10px; border-radius: 8px; margin-bottom: 1rem; font-size: 0.9rem;">
-          {% for error in form.non_field_errors %}
-             {{ error }}
-          {% endfor %}
+      {% if form.non_field_errors %}
+      <div style="background-color: #ffe6ec; color: #b3003c; padding: 10px; border-radius: 8px; margin-bottom: 1rem; font-size: 0.9rem;">
+        {% for error in form.non_field_errors %}
+          {{ error }}
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% for field in form %}
+      <div class="form-group" style="margin-bottom: 1.2rem;">
+        <label style="display: block; font-weight: bold; margin-bottom: 0.3rem; color: #43054E;">
+          {{ field.label }}
+        </label>
+        {{ field }}
+        {% if field.errors %}
+        <div class="form-error" style="color: #E63973; font-size: 0.85rem; margin-top: 0.3rem;">
+          {{ field.errors }}
         </div>
         {% endif %}
+      </div>
+      {% endfor %}
 
-        {% for field in form %}
-          <div class="form-group" style="margin-bottom: 1.2rem;">
-            <label style="display: block; font-weight: bold; margin-bottom: 0.3rem; color: #43054E;">
-              {{ field.label }}
-            </label>
-            {{ field }}
-            {% if field.errors %}
-              <div class="form-error" style="color: #E63973; font-size: 0.85rem; margin-top: 0.3rem;">
-                {{ field.errors }}
-              </div>
-            {% endif %}
-          </div>
-        {% endfor %}
+      <!-- Preview do banner -->
+      <div id="banner-container" style="margin-bottom:1rem;">
+        {% if form.instance.banner %}
+        <img src="{{ form.instance.banner.url }}" style="max-width:100%; margin-top:1rem; border-radius:8px;">
+        {% endif %}
+      </div>
 
-        <div style="text-align: center; margin-top: 2rem;">
-          <button type="submit" class="btn highlight">Salvar Alterações</button>
-          <a href="{% url 'core:event_detail' event.id %}" class="btn cancel" style="margin-left: 1rem;">Cancelar</a>
-        </div>
-      </form>
-    </div>
+      <div style="text-align: center; margin-top: 2rem;">
+        <button type="submit" class="btn highlight">Salvar Alterações</button>
+        <a href="{% url 'core:event_detail' event.id %}" class="btn cancel" style="margin-left: 1rem;">Cancelar</a>
+      </div>
+    </form>
   </div>
+</div>
+
+<!-- Flatpickr CSS e JS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<!-- jQuery e Mask -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+
+<script>
+$(document).ready(function(){
+    // Flatpickr para datas
+    flatpickr("#id_start_date", { dateFormat: "Y-m-d" });
+    flatpickr("#id_end_date", { dateFormat: "Y-m-d" });
+
+    // Flatpickr para horários
+    flatpickr("#id_start_time", { enableTime: true, noCalendar: true, dateFormat: "H:i" });
+    flatpickr("#id_end_time", { enableTime: true, noCalendar: true, dateFormat: "H:i" });
+
+    // Máscara para telefone
+    $("#id_phone").mask("(00) 00000-0000");
+
+    // Preview do banner
+    $('#id_banner').on('change', function(event){
+        const file = event.target.files[0];
+        if(file){
+            if(!file.type.startsWith('image/')){
+                alert("O arquivo deve ser uma imagem (jpg, png, etc).");
+                $(this).val('');
+                $('#banner-container').empty();
+            } else if(file.size > 5 * 1024 * 1024){
+                alert("O tamanho da imagem não pode ultrapassar 5MB.");
+                $(this).val('');
+                $('#banner-container').empty();
+            } else {
+                const reader = new FileReader();
+                reader.onload = function(e){
+                    $('#banner-container').html('<img src="'+e.target.result+'" style="max-width:100%; margin-top:1rem; border-radius:8px;">');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+    });
+});
+</script>
 {% endblock %}

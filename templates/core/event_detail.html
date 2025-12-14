@@ -5,6 +5,7 @@
 <div class="container" style="max-width: 700px; margin: 3rem auto;">
   <div class="card shadow-sm border-0">
     <div class="card-body">
+
       {% if event.banner %}
         <div style="text-align: center; margin-bottom: 1.5rem;">
           <img src="{{ event.banner.url }}" 
@@ -14,8 +15,21 @@
       {% endif %}
 
       <h2 class="text-ceub mb-3">📌 {{ event.title }}</h2>
+
       <p><strong>📂 Tipo:</strong> {{ event.get_event_type_display }}</p>
-      <p><strong>🗓 Data:</strong> {{ event.start_date }} às {{ event.start_time }}</p>
+
+      <p>
+        <strong>🗓 Data:</strong>
+        {% if event.start_date == event.end_date %}
+          Dia {{ event.start_date|date:"d \d\e F \d\e Y" }},
+          das {{ event.start_time|time:"H:i" }} às {{ event.end_time|time:"H:i" }}
+        {% else %}
+          Do dia {{ event.start_date|date:"d" }}
+          até {{ event.end_date|date:"d \d\e F \d\e Y" }},
+          das {{ event.start_time|time:"H:i" }} às {{ event.end_time|time:"H:i" }}
+        {% endif %}
+      </p>
+
       <p><strong>📍 Local:</strong> {{ event.location }}</p>
       <p><strong>👤 Responsável:</strong> {{ event.organizer }}</p>
       <p><strong>👥 Inscritos:</strong> {{ participants_count }} de {{ event.max_participants }} vagas</p>
@@ -25,48 +39,96 @@
         <p>{{ event.description }}</p>
       {% endif %}
 
+      {# ===== AÇÕES DO ORGANIZADOR ===== #}
       {% if request.user.role == 'organizer' and event.organizer == request.user %}
         <div class="d-flex justify-content-center gap-2 mt-4">
-          <a href="{% url 'core:edit_event' event.id %}" 
-             class="btn btn-warning fw-bold">
+          <a href="{% url 'core:edit_event' event.id %}"
+             class="btn"
+             style="background-color: #43054E; color: white; font-weight: bold;">
             Editar Evento
           </a>
-
-          <a href="{% url 'core:event_delete' event.id %}" 
-             class="btn btn-danger fw-bold">
-             Excluir Evento
+          <a href="{% url 'core:event_delete' event.id %}"
+             class="btn"
+             style="background-color: #D32F2F; color: white; font-weight: bold;">
+            Excluir Evento
           </a>
         </div>
       {% endif %}
 
+      {# ===== AÇÕES DO PARTICIPANTE ===== #}
       {% if request.user.role != 'organizer' %}
-        <form method="post" class="d-flex justify-content-center mt-3">
+        <form method="post" class="mt-4">
           {% csrf_token %}
+
           {% if registered %}
-            <button type="submit" name="unsubscribe" class="btn btn-danger me-2">
-              ❌ Cancelar inscrição
-            </button>
+            <div class="d-flex justify-content-between align-items-center">
+              <button type="submit" name="unsubscribe"
+                      class="btn"
+                      style="background-color: #D32F2F; color: white;">
+                ❌ Cancelar inscrição
+              </button>
+
+              <a href="{% url 'core:events' %}"
+                 class="btn"
+                 style="background-color: #e73973; color: white;">
+                Voltar
+              </a>
+            </div>
+
           {% else %}
-            <button type="submit" name="subscribe" class="btn btn-primary me-2">
-              ✅ Inscrever-se
-            </button>
+            {% if participants_count >= event.max_participants %}
+              <div class="alert alert-warning text-center mb-3">
+                ⚠️ Este evento já atingiu o número máximo de participantes.
+              </div>
+
+              <div class="text-end">
+                <a href="{% url 'core:events' %}"
+                   class="btn"
+                   style="background-color: #e73973; color: white;">
+                  Voltar
+                </a>
+              </div>
+
+            {% else %}
+              <div class="d-flex justify-content-between align-items-center">
+                <button type="submit" name="subscribe"
+                        class="btn"
+                        style="background-color: #e73973; color: white;">
+                  ✅ Inscrever-se
+                </button>
+
+                <a href="{% url 'core:events' %}"
+                   class="btn"
+                   style="background-color: #e73973; color: white;">
+                  Voltar
+                </a>
+              </div>
+            {% endif %}
           {% endif %}
-          <a href="{% url 'core:events' %}" class="btn btn-secondary">Voltar</a>
         </form>
       {% endif %}
 
+      {# ===== LISTA DE PARTICIPANTES ===== #}
       {% if is_organizer %}
         <hr class="my-4">
         <h3 class="text-ceub mb-3">👥 Participantes</h3>
+
         <div class="list-group">
           {% for participant in participants %}
             <div class="list-group-item d-flex justify-content-between align-items-center">
-              <span>{{ participant.get_full_name|default:participant.username }}</span>
-              <a href="{% url 'core:emitir_certificado' event.id participant.id %}" 
-                 class="btn btn-ceub btn-sm">🎓 Emitir Certificado</a>
+              <span>
+                {{ participant.get_full_name|default:participant.username }}
+              </span>
+              <a href="{% url 'core:emitir_certificado' event.id participant.id %}"
+                 class="btn"
+                 style="background-color: #43054E; color: white;">
+                🎓 Emitir Certificado
+              </a>
             </div>
           {% empty %}
-            <div class="list-group-item">Nenhum participante inscrito ainda.</div>
+            <div class="list-group-item">
+              Nenhum participante inscrito ainda.
+            </div>
           {% endfor %}
         </div>
       {% endif %}

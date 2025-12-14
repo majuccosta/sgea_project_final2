@@ -12,7 +12,7 @@ class Command(BaseCommand):
             {"username": "professor", "password": "Professor@123", "role": "teacher", "email": "professor@sgea.com"},
             {"username": "aluno", "password": "Aluno@123", "role": "student", "email": "aluno@sgea.com"},
         ]
-
+        
         for user in users:
             if not User.objects.filter(username=user["username"]).exists():
                 User.objects.create_user(

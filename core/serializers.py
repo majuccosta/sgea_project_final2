@@ -41,7 +41,6 @@ class EventCreateSerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, attrs):
-        # Validação: data de término não pode ser anterior à data de início
         if attrs.get('end_date') and attrs.get('start_date') and attrs['end_date'] < attrs['start_date']:
             raise serializers.ValidationError("A data de término não pode ser anterior à data de início.")
         return attrs

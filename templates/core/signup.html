@@ -3,7 +3,10 @@
 
 {% block content %}
 <div class="container" style="max-width: 500px; margin: 3rem auto;">
-    <h2 style="color: #43054E; margin-bottom: 1rem;">📝 Criar Conta</h2>
+    <!-- Título com emoji -->
+    <h2 style="color: #43054E; margin-bottom: 1rem;">
+        📝 Criar Conta
+    </h2>
 
     <div style="background-color: #fff; border-left: 6px solid #E63973; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
         <form method="post">
@@ -24,19 +27,22 @@
             {% endfor %}
 
             <div style="margin-top: 2rem; text-align: center;">
-                <button type="submit" class="btn highlight">Cadastrar</button>
+                <button type="submit" class="btn highlight">
+                    <i class="fas fa-check"></i> Cadastrar
+                </button>
             </div>
         </form>
 
         <div style="margin-top: 2rem; text-align: center;">
             <p style="font-size: 0.9rem;">Já tem uma conta?
-                <a href="{% url 'core:login' %}" style="color: #E63973; font-weight: bold;">Entrar</a>
+                <a href="{% url 'core:login' %}" style="color: #E63973; font-weight: bold;">
+                    <i class="fas fa-sign-in-alt"></i> Entrar
+                </a>
             </p>
         </div>
     </div>
 </div>
 
-<!-- jQuery e Mask -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 

@@ -21,7 +21,6 @@ urlpatterns = [
     path('events/new/', views.create_event_view, name='event_form'),
     path('events/<int:event_id>/edit/', views.edit_event, name='edit_event'),
     path('events/<int:event_id>/delete/', views.delete_event, name='event_delete'),
-
     # Perfil
     path('profile/', views.profile_view, name='profile'),
     path('profile/edit/', views.edit_profile_view, name='edit_profile'),
@@ -49,7 +48,7 @@ urlpatterns = [
     path("logs/", audit_logs, name="audit_logs"),
     path('activate/<uidb64>/', views.activate_user, name='activate_user'),
     path('event/<int:event_id>/certificado/<int:user_id>/', views.emitir_certificado, name='emitir_certificado'),
-
+    
 ]
 
 if settings.DEBUG:

@@ -2,39 +2,45 @@
 {% block title %}Entrar - SGEA{% endblock %}
 
 {% block content %}
+<div class="container" style="max-width: 500px; margin: 3rem auto;">
+  <!-- Título com emoji -->
+  <h2 style="color: #43054E; margin-bottom: 1rem;">
+    🔐 Entrar no SGEA
+  </h2>
 
-  <div class="container" style="max-width: 500px; margin: 3rem auto;">
-    <h2 style="color: #43054E; margin-bottom: 1rem;">🔐 Entrar no SGEA</h2>
+  <div style="background-color: #fff; border-left: 6px solid #E63973; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="username">Usuário</label>
+        <input type="text" name="username" id="username" required class="form-control" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #ccc;">
+      </div>
 
-    <div style="background-color: #fff; border-left: 6px solid #E63973; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-      <form method="post">
-        {% csrf_token %}
-        <div class="form-group">
-          <label for="username">Usuário</label>
-          <input type="text" name="username" id="username" required class="form-control" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #ccc;">
+      <div class="form-group">
+        <label for="password">Senha</label>
+        <input type="password" name="password" id="password" required class="form-control" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #ccc;">
+      </div>
+
+      {% if form.errors %}
+        <div class="form-error" style="color: #E63973; margin-top: 1rem;">
+          <p><i class="fas fa-exclamation-circle"></i> Usuário ou senha inválidos. Tente novamente.</p>
         </div>
-
-        <div class="form-group">
-          <label for="password">Senha</label>
-          <input type="password" name="password" id="password" required class="form-control" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #ccc;">
-        </div>
-
-        {% if form.errors %}
-          <div class="form-error" style="color: #E63973; margin-top: 1rem;">
-            <p>Usuário ou senha inválidos. Tente novamente.</p>
-          </div>
-        {% endif %}
-
-        <div style="margin-top: 2rem; text-align: center;">
-          <button type="submit" class="btn">Entrar</button>
-        </div>
-      </form>
+      {% endif %}
 
       <div style="margin-top: 2rem; text-align: center;">
-        <p style="font-size: 0.9rem;">Ainda não tem conta?
-          <a href="{% url 'core:signup' %}" style="color: #E63973; font-weight: bold;">Criar Conta</a>
-        </p>
+        <button type="submit" class="btn">
+          <i class="fas fa-sign-in-alt"></i> Entrar
+        </button>
       </div>
+    </form>
+
+    <div style="margin-top: 2rem; text-align: center;">
+      <p style="font-size: 0.9rem;">Ainda não tem conta?
+        <a href="{% url 'core:signup' %}" style="color: #E63973; font-weight: bold;">
+          Criar Conta
+        </a>
+      </p>
     </div>
   </div>
+</div>
 {% endblock %}

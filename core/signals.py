@@ -2,7 +2,7 @@ from django.db.models.signals import post_save, post_delete, m2m_changed
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from .utils import registrar_log
-from .models import Event
+from .models import Event, Registration
 
 User = get_user_model()
 
@@ -65,11 +65,7 @@ def log_evento_apagado(sender, instance, **kwargs):
         description=f"Evento apagado: {instance.title}"
     )
 
-from django.db.models.signals import m2m_changed
-from django.dispatch import receiver
-from django.contrib.auth import get_user_model
-from .utils import registrar_log
-from .models import Event, Registration
+
 
 User = get_user_model()
 
@@ -81,7 +77,7 @@ def sync_registration(sender, instance, action, pk_set, **kwargs):
     for user_id in pk_set:
         user = User.objects.get(id=user_id)
         if action == "post_add":
-            # cria registro de inscrição
+            
             Registration.objects.get_or_create(user=user, event=instance)
             registrar_log(
                 user=user,
@@ -91,7 +87,7 @@ def sync_registration(sender, instance, action, pk_set, **kwargs):
                 description=f"Usuário {user.username} inscrito no evento {instance.title}"
             )
         elif action == "post_remove":
-            # remove registro de inscrição
+           
             Registration.objects.filter(user=user, event=instance).delete()
             registrar_log(
                 user=user,

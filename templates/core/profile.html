@@ -3,7 +3,10 @@
 
 {% block content %}
 <div class="container" style="max-width: 700px; margin: 3rem auto;">
-  <h2 style="color: #43054E; margin-bottom: 1rem;">👤 Meu Perfil</h2>
+  <!-- Título com emoji -->
+  <h2 style="color: #43054E; margin-bottom: 1rem;">
+    👤 Meu Perfil
+  </h2>
 
   <div style="background-color: #fff; border-left: 6px solid #E63973; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
     <p><strong>Usuário:</strong> {{ user.username }}</p>
@@ -14,7 +17,9 @@
     <hr style="margin: 1.5rem 0;">
 
     {% if user.role == 'organizer' %}
-      <h4 style="color: #43054E;">📌 Meus Eventos Organizados</h4>
+      <h4 style="color: #43054E;">
+        <i class="fas fa-thumbtack" style="color:#43054E;"></i> Meus Eventos Organizados
+      </h4>
       {% if organized_events %}
         <div style="display: grid; gap: 1rem;">
           {% for event in organized_events %}
@@ -30,7 +35,9 @@
         <p>Ainda não criou nenhum evento.</p>
       {% endif %}
     {% else %}
-      <h4 style="color: #43054E;">📅 Meus Eventos Inscritos</h4>
+      <h4 style="color: #43054E;">
+        <i class="fas fa-calendar-alt" style="color:#43054E;"></i> Meus Eventos Inscritos
+      </h4>
       {% if registered_events %}
         <div style="display: grid; gap: 1rem;">
           {% for event in registered_events %}
@@ -48,8 +55,12 @@
     {% endif %}
 
     <div style="margin-top: 2rem; text-align: center;">
-      <a href="{% url 'core:edit_profile' %}" class="btn">✏️ Editar perfil</a>
-      <a href="{% url 'core:logout' %}" class="btn" style="background-color: #ccc; color: #43054E; margin-left: 1rem;">Sair</a>
+      <a href="{% url 'core:edit_profile' %}" class="btn">
+        <i class="fas fa-edit"></i> Editar perfil
+      </a>
+      <a href="{% url 'core:logout' %}" class="btn" style="background-color: #ccc; color: #43054E; margin-left: 1rem;">
+        <i class="fas fa-sign-out-alt"></i> Sair
+      </a>
     </div>
   </div>
 </div>

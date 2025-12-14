@@ -6,7 +6,9 @@ from datetime import date, timedelta
 import re
 from .models import Event
 
+
 User = get_user_model()
+
 
 # ------------------ REGISTER FORM ------------------
 class RegisterForm(UserCreationForm):
@@ -32,7 +34,6 @@ class RegisterForm(UserCreationForm):
             'role'
         ]
 
-    # Validação de senha
     def clean_password2(self):
         password = self.cleaned_data.get("password2")
         if not re.match(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&]).{8,}$', password):
@@ -41,10 +42,9 @@ class RegisterForm(UserCreationForm):
             )
         return password
 
-    # Validação de telefone
     def clean_phone(self):
         phone = self.cleaned_data.get('phone')
-        digits = re.sub(r'\D', '', phone)  # Remove caracteres não numéricos
+        digits = re.sub(r'\D', '', phone)
         if len(digits) != 11:
             raise ValidationError("O telefone deve conter 11 dígitos (ex: 11999999999).")
         return phone
@@ -81,6 +81,7 @@ class LoginForm(forms.Form):
 
 # ------------------ EVENT FORM ------------------
 
+
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
@@ -102,70 +103,49 @@ class EventForm(forms.ModelForm):
             'banner': 'Banner do Evento',
         }
         widgets = {
-            'title': forms.TextInput(attrs={'placeholder': 'Digite o título do evento'}),
-            'event_type': forms.Select(),
-            'start_date': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date'}),
-            'end_date': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date'}),
-            'start_time': forms.TimeInput(format='%H:%M', attrs={'type': 'time'}),
-            'end_time': forms.TimeInput(format='%H:%M', attrs={'type': 'time'}),
-            'location': forms.TextInput(attrs={'placeholder': 'Digite o local do evento'}),
-            'description': forms.Textarea(attrs={'placeholder': 'Descreva brevemente o evento...', 'rows': 3}),
-            'max_participants': forms.NumberInput(attrs={'placeholder': 'Ex: 50'}),
+            'start_date': forms.DateInput(attrs={'type': 'date'}),
+            'end_date': forms.DateInput(attrs={'type': 'date'}),
+            'start_time': forms.TimeInput(attrs={'type': 'time'}),
+            'end_time': forms.TimeInput(attrs={'type': 'time'}),
         }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Preenche datas e horários ao editar
-        for field in ['start_date', 'end_date']:
-            if self.instance and getattr(self.instance, field):
-                self.fields[field].initial = getattr(self.instance, field).strftime('%Y-%m-%d')
-        for field in ['start_time', 'end_time']:
-            if self.instance and getattr(self.instance, field):
-                self.fields[field].initial = getattr(self.instance, field).strftime('%H:%M')
 
     def clean(self):
         cleaned_data = super().clean()
-        start_date = cleaned_data.get('start_date')
-        end_date = cleaned_data.get('end_date')
+
+        start_date = cleaned_data.get('start_date') or self.instance.start_date
+        end_date = cleaned_data.get('end_date') or self.instance.end_date
         start_time = cleaned_data.get('start_time')
         end_time = cleaned_data.get('end_time')
 
-        # Validação de datas
-        if start_date and start_date < date.today():
-            raise ValidationError("⚠️ A data de início não pode ser anterior a hoje.")
+        if not self.instance.pk:
+            if start_date and start_date < date.today():
+                raise ValidationError(
+                    "⚠️ A data de início não pode ser anterior a hoje."
+                )
+
         if start_date and end_date and end_date < start_date:
-            raise ValidationError("⚠️ A data de término não pode ser anterior à data de início.")
-        if start_date == end_date and start_time and end_time:
+            raise ValidationError(
+                "⚠️ A data de término não pode ser anterior à data de início."
+            )
+
+        if start_time and end_time:
             if end_time <= start_time:
-                raise ValidationError("⚠️ A hora de término deve ser posterior à hora de início.")
-        if start_date and start_date > date.today() + timedelta(days=365*5):
-            raise ValidationError("⚠️ A data de início é muito distante no futuro.")
+                raise ValidationError(
+                    "⚠️ A hora de término deve ser posterior à hora de início."
+                )
+
+        
+        if start_date and start_date > date.today() + timedelta(days=365 * 5):
+            raise ValidationError(
+                "⚠️ A data de início é muito distante no futuro."
+            )
 
         return cleaned_data
-
-
 
     def clean_max_participants(self):
         max_p = self.cleaned_data.get('max_participants')
         if max_p is not None and max_p <= 0:
-            raise ValidationError("O número de participantes deve ser maior que zero.")
+            raise ValidationError(
+                "O número de participantes deve ser maior que zero."
+            )
         return max_p
-
-    def clean_banner(self):
-        banner = self.cleaned_data.get('banner')
-        if not banner:
-            return banner
-
-        if hasattr(banner, 'content_type'):
-            if not banner.content_type.startswith('image'):
-                raise ValidationError("O arquivo deve ser uma imagem (jpg, png, etc).")
-
-        # Verifica extensão
-        valid_extensions = ['jpg', 'jpeg', 'png']
-        if not any([banner.name.lower().endswith(ext) for ext in valid_extensions]):
-            raise ValidationError("O arquivo deve ter extensão jpg, jpeg ou png.")
-
-        if banner.size > 5 * 1024 * 1024:
-            raise ValidationError("O tamanho da imagem não pode ultrapassar 5MB.")
-
-        return banner

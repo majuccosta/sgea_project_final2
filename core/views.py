@@ -1,42 +1,21 @@
 from datetime import datetime, date
 import os
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate, get_user_model
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
-from .models import Event, Certificate, AuditLog
-from .forms import RegisterForm, EditProfileForm, LoginForm, EventForm
-from .utils import registrar_log, send_welcome_email
-
-# PDF libs
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4
-from reportlab.platypus import Paragraph, Frame
-from reportlab.lib.styles import getSampleStyleSheet
-
-# REST Framework
 from rest_framework import generics, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.throttling import UserRateThrottle
-from .serializers import EventSerializer, EventCreateSerializer 
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes, force_str
-from rest_framework.exceptions import PermissionDenied
-from reportlab.lib.utils import ImageReader
-from reportlab.lib.colors import HexColor
-import os
-from django.conf import settings
-from .models import Registration
-import os
-from datetime import datetime
-from django.conf import settings
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
-from django.contrib.auth.decorators import login_required
+
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
@@ -44,7 +23,11 @@ from reportlab.lib.units import cm
 from reportlab.platypus import Paragraph, Frame
 from reportlab.lib.styles import getSampleStyleSheet
 
-from .models import Event, Certificate, User
+from .models import Event, Certificate, AuditLog, Registration
+from .forms import RegisterForm, EditProfileForm, LoginForm, EventForm
+from .serializers import EventSerializer, EventCreateSerializer
+from .utils import registrar_log, send_welcome_email
+
 User = get_user_model()
 
 # ---------------- HOME ----------------
@@ -66,9 +49,12 @@ def event_detail(request, event_id):
     participants = event.participants.all()
 
     if request.method == "POST":
-        # Inscrição
+        # ---------------- INSCRIÇÃO ----------------
         if 'subscribe' in request.POST and not registered:
-            if event.participants.count() >= event.max_participants:
+            if request.user == event.organizer:
+                messages.error(request, "Os organizadores não podem se inscrever em eventos.")
+
+            elif event.participants.count() >= event.max_participants:
                 messages.error(request, "Limite de vagas atingido.")
             else:
                 event.participants.add(request.user)
@@ -81,7 +67,8 @@ def event_detail(request, event_id):
                     description=f"Usuário {request.user.username} inscrito no evento {event.title}"
                 )
                 return redirect('core:event_detail', event_id=event.id)
-        # Cancelamento
+
+        # ---------------- CANCELAMENTO ----------------
         elif 'unsubscribe' in request.POST and registered:
             event.participants.remove(request.user)
             messages.success(request, 'Inscrição cancelada!')
@@ -99,8 +86,9 @@ def event_detail(request, event_id):
         'registered': registered,
         'is_organizer': is_organizer,
         'participants': participants,
-        'participants_count': participants.count(),  # 👈 novo
+        'participants_count': participants.count(),
     })
+
 
 # ---------------- PROFILE -----------------
 @login_required
@@ -137,7 +125,6 @@ def register_view(request):
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             link = f"http://127.0.0.1:8000/activate/{uid}/"
             send_welcome_email(user, link)
-            # não usar messages.success aqui
             return redirect('core:home')
     else:
         form = RegisterForm()
@@ -175,7 +162,7 @@ def activate_user(request, uidb64):
 @login_required
 def logout_view(request):
     logout(request)
-    list(messages.get_messages(request))  # limpa mensagens pendentes
+    list(messages.get_messages(request))
     return redirect('core:login')
 
 # ---------------- EVENT CREATE / EDIT / DELETE -----------------
@@ -207,9 +194,10 @@ def create_event_view(request):
 @login_required
 def edit_event(request, event_id):
     event = get_object_or_404(Event, id=event_id)
+
     if request.user != event.organizer:
         messages.error(request, "Você não pode editar esse evento.")
-        return redirect('core:event_detail', event_id=event_id)
+        return redirect('core:event_detail', event_id=event.id)
 
     if request.method == "POST":
         form = EventForm(request.POST, request.FILES, instance=event)
@@ -217,13 +205,14 @@ def edit_event(request, event_id):
             form.save()
             messages.success(request, "Evento atualizado!")
             return redirect('core:event_detail', event_id=event.id)
-        else:
-            messages.error(request, "Corrija os erros abaixo.")  # 👈 garante feedback
+        messages.error(request, "Corrija os erros abaixo.")
     else:
         form = EventForm(instance=event)
 
-    return render(request, 'core/edit_event.html', {'form': form, 'event': event})
-
+    return render(request, 'core/edit_event.html', {
+        'form': form,
+        'event': event,  # útil se quiser exibir título, banner etc.
+    })
 
 @login_required
 def delete_event(request, event_id):
@@ -251,45 +240,37 @@ def emitir_certificado(request, event_id, user_id):
     event = get_object_or_404(Event, id=event_id)
     user = get_object_or_404(User, id=user_id)
 
-    # Apenas organizador pode emitir
     if request.user.role != 'organizer':
         return HttpResponse("Sem permissão.", status=403)
-
-    # Só pode emitir para inscritos
+    
     if not event.participants.filter(id=user.id).exists():
         return HttpResponse("Usuário não inscrito.", status=403)
 
-    # Registrar emissão no banco
     certificado, created = Certificate.objects.get_or_create(user=user, event=event)
 
-    # Configuração do PDF
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="certificado_{user.username}_{event.title}.pdf"'
 
     c = canvas.Canvas(response, pagesize=A4)
     width, height = A4
 
-    # Fundo branco
     c.setFillColorRGB(1, 1, 1)
     c.rect(0, 0, width, height, fill=1)
 
-    # Moldura roxa
     c.setStrokeColor(colors.HexColor("#43054E"))
     c.setLineWidth(4)
     c.rect(2*cm, 2*cm, width - 4*cm, height - 4*cm, stroke=1, fill=0)
 
-    # Logo centralizada
     logo_path = os.path.join(settings.BASE_DIR, 'static', 'image', 'sgea.jpg')
     if os.path.exists(logo_path):
         c.drawImage(logo_path, x=width/2 - 2*cm, y=height - 6*cm,
                     width=4*cm, height=4*cm, preserveAspectRatio=True, mask='auto')
 
-    # Título
+   
     c.setFont("Helvetica-Bold", 26)
     c.setFillColor(colors.HexColor("#43054E"))
     c.drawCentredString(width/2, height - 7.5*cm, "Certificado de Participação")
 
-    # Texto central
     styles = getSampleStyleSheet()
     style = styles['Normal']
     style.alignment = 1
@@ -307,7 +288,6 @@ def emitir_certificado(request, event_id, user_id):
 
     frame.addFromList([para], c)
 
-    # Rodapé com data e assinatura
     data_hora = datetime.now().strftime('%d/%m/%Y, às %H:%M')
     c.setFont("Helvetica-Oblique", 12)
     c.drawCentredString(width/2, 4*cm, f"Emitido em {data_hora}")
@@ -374,11 +354,20 @@ class EventRegisterAPI(APIView):
         except Event.DoesNotExist:
             return Response({"error": "Evento não encontrado."}, status=404)
 
+        # Bloqueio do organizador
+        if user == event.organizer:
+            return Response({"error": "Os organizadores não podem se inscrever em eventos."}, status=403)
+
+
+        # Verifica se já está inscrito
         if event.participants.filter(id=user.id).exists():
             return Response({"error": "Usuário já inscrito."}, status=400)
+
+        # Verifica limite de vagas
         if event.participants.count() >= event.max_participants:
             return Response({"error": "Limite de vagas atingido."}, status=400)
 
+        # Realiza a inscrição
         event.participants.add(user)
         registrar_log(
             user=user,
@@ -387,7 +376,9 @@ class EventRegisterAPI(APIView):
             object_id=f"{user.id}-{event.id}",
             description=f"Usuário {user.username} inscrito no evento {event.title}"
         )
+
         return Response({"success": "Inscrição realizada!"})
+
 
 
 
@@ -435,5 +426,10 @@ def audit_logs(request):
     if request.user.role != "organizer":
         messages.error(request, "Apenas organizadores podem visualizar os logs.")
         return redirect("core:home")
-    logs = AuditLog.objects.all().order_by('-timestamp')
+    all_logs = AuditLog.objects.all().order_by('-timestamp')
+    paginator = Paginator(all_logs, 20)  # limite de 20 por página
+    page_number = request.GET.get('page')
+    logs = paginator.get_page(page_number)
     return render(request, "core/audit_logs.html", {"logs": logs})
+
+
