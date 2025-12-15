@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ---------------- Segurança ----------------
 SECRET_KEY = 'sua_chave_secreta_aqui'  # substitua por uma chave real
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 # settings.py
 
 # URL base do sistema (ajuste conforme ambiente)
